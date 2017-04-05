@@ -15,6 +15,31 @@ To do:
 2. Tighten continuous listening ability.
 3. Integrate Sphinx.
 4. De-uglify
+
+In continuous mode, the loop gets stuck occasionally.  It is possible
+that I should wait some time for the listener to stop before starting
+the next loop, but that creates more "dead" air time, doesn't it?
+That's a question.
+
+Ideas for projects:
+ 1. Listen for phrases that are not programmed.
+    Compare words in those phrases with skill names and command words.
+    Even if you don't know, use the skill that correlates highest.
+    Get feedback on the guessed skills (were they expected? No?)
+    Give the unknown phrases a ranking based on the feedback.
+    As confidence grows higher, add the phrases to skill command lists.
+    = Learning new synonyms for skill commands.
+ 2. For phrases that are not skills (rank low), forward those to Google.
+    Store the responses tied to the phrases.
+    On the next occurrence of unknown phrases, give the stored answers.
+    Get feedback on the guessed answers (were they expected? No?)
+    Give answers and unknown phrases rankings based on the feedback.
+    As confidence in answers grow, add the answers to phrase responses.
+    As confidence in phrases grow, add the phrases to new command lists.
+    Find common words in the phrases and answers and create skill names.
+    Create skills based on the type of phrases and answers.
+    Add the command lists and responses to the new skills.
+    = Learning new skills.
 """
 
 import argparse
@@ -32,7 +57,7 @@ DEFAULT_VOICE = 'Ava'  # System voice to use
 DEFAULT_ALIAS = 'Panda'  # Wake word; see what is recognized easiest
 
 SERVICES = (
-    'GoogleSpeech',
+    'Google',
     'GoogleCloud',
     'Sphinx',
     'Wit.ai',
@@ -51,8 +76,8 @@ DEFAULT_PHRASE = 'help me'
 SKILLS = {
     'help': {
         'commands': (
+            'help me',  # More precise or encapsulating should come first
             'help',
-            'help me',
             ),
         },
     'date': {
@@ -206,7 +231,7 @@ class Assistant(object):
         """
         self.speak('Listening')
         # Need a new microphone as source as listen_in_background()
-        #  already uses the object's microphone inside a context manager...
+        #   already uses the object's microphone inside a context manager...
         with s2t.Microphone() as source:
             audio = self.recognizer.listen(source, timeout=timeout)
         phrase = self.audio_to_text(audio=audio, continuous=False)
@@ -260,7 +285,7 @@ class Assistant(object):
         recognizer = recognizer or self.recognizer
         service = service or self.service
         try:
-            if service == 'GoogleSpeech':
+            if service == 'Google':
                 phrase = recognizer.recognize_google(audio)
             else:
                 phrase = 'The %s Recognizer is not yet implemented' % service
@@ -290,6 +315,7 @@ class Assistant(object):
             # If there is a command, extract it by removing wake word:
             phrase = remove_leading_words(phrase, self.alias)
             # If wake word only, give the user a chance to give a command:
+            #   But is this really a good idea?
             if not phrase:
                 phrase = self.listen()
         else:
@@ -370,7 +396,7 @@ class Assistant(object):
             response = time.strftime('It is now %H:%M', localtime)
         elif skill == 'quit':
             response = 'Stopping now'
-            # This controls the listen_loop() loop:
+            # This controls the listen_loop():
             self.__exit_loop = True
         elif skill == 'turn on':
             if operand:
@@ -409,9 +435,10 @@ def remove_leading_words(phrase, leader):
     """
     phrase_parts = phrase.split()
     leader_len = len(leader.split())
-    phrase_start = ' '.join(phrase_parts[:leader_len]).lower()
-    if leader.lower() == phrase_start:
+    phrase_start = ' '.join(phrase_parts[:leader_len])
+    if leader.lower() == phrase_start.lower():
         phrase = ' '.join(phrase_parts[leader_len:])
+    LOGGER.debug('remove_leading_words: %s => %s', leader, phrase)
     return phrase
 
 
@@ -427,7 +454,6 @@ def starts_with(phrase, leader):
     """
     new_phrase = remove_leading_words(phrase, leader)
     result = phrase != new_phrase
-    LOGGER.debug('starts_with: %s : %s => %s', result, leader, phrase)
     return result
 
 
