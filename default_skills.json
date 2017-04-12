@@ -1,0 +1,94 @@
+{
+    "date": {
+        "candidates": {}, 
+        "commands": [
+            "what date is it"
+        ], 
+        "pattern": "Today is %A %d %B %Y"
+    }, 
+    "farewell": {
+        "candidates": {}, 
+        "commands": [
+            "goodbye", 
+            "bye", 
+            "goodnight", 
+            "good night", 
+            "sayonara"
+        ], 
+        "response": "But we are just getting started!"
+    }, 
+    "greetings": {
+        "candidates": {}, 
+        "commands": [
+            "hello", 
+            "hi", 
+            "good morning", 
+            "good day", 
+            "good evening"
+        ], 
+        "response": "Hello yourself!"
+    }, 
+    "help": {
+        "candidates": {}, 
+        "commands": [
+            "help me"
+        ]
+    }, 
+    "identity": {
+        "candidates": {}, 
+        "commands": [
+            "who are you", 
+            "where did you come from", 
+            "who made you", 
+            "how old are you"
+        ], 
+        "response": "My real name is Panda and I was created by Kevin in April 2017."
+    }, 
+    "joke": {
+        "candidates": {}, 
+        "commands": [
+            "tell me a joke"
+        ], 
+        "random": [
+            "Knock knock. Who's there? Amish. Amish who? You're not a shoe!", 
+            "A squirrel is sitting in a tree when all of a sudden it starts shaking like an earthquake!  He looks down to see an elephant climbing up! Hey, he says, why are you coming up here?!  I want to eat some pears, the elephant replies.  This isn't a pear tree! the squirrel shouts.  I know, says the elephant. I brought my own pears.", 
+            "I invented a new word: plagiarism."
+        ]
+    }, 
+    "quit": {
+        "candidates": {}, 
+        "commands": [
+            "stop listening"
+        ]
+    }, 
+    "riddle": {
+        "candidates": {}, 
+        "commands": [
+            "tell me a riddle"
+        ], 
+        "random": [
+            "What's long, brown, and sticky? ... A stick!", 
+            "What's orange and sounds like a parrot? ... A carrot!"
+        ]
+    }, 
+    "time": {
+        "candidates": {}, 
+        "commands": [
+            "what time is it"
+        ], 
+        "pattern": "It is now %H:%M"
+    }, 
+    "turn off": {
+        "candidates": {}, 
+        "commands": [
+            "disable"
+        ], 
+        "response": "There is currently nothing on to turn off."
+    }, 
+    "turn on": {
+        "candidates": {}, 
+        "commands": [
+            "enable"
+        ]
+    }
+}
