@@ -12,6 +12,9 @@ Requirements:
     b. $ sudo -H pip install pyaudio
     c. Google Speech Recognition, but should be updated to use Sphinx.
 
+To list available voices in MacOS:
+$ say -v '?'
+
 To do:
 1. Integrate Sphinx.
 2. Tighten listening loop.  Sometimes gets stuck listening for wake word.
@@ -156,6 +159,8 @@ class Assistant(object):
                 audio = self.recognizer.listen(source, timeout=timeout,
                                                phrase_time_limit=limit)
                 phrase = self.audio_to_text(audio=audio)
+                if phrase:
+                    phrase = phrase.lower()
             except s2t.WaitTimeoutError:
                 phrase = None
         return phrase
@@ -219,6 +224,8 @@ class Assistant(object):
         try:
             if service == 'Google':
                 phrase = recognizer.recognize_google(audio)
+            elif service == 'Sphinx':
+                phrase = recognizer.recognize_sphinx(audio)
             else:
                 phrase = 'The %s Recognizer is not yet implemented' % service
             LOGGER.info('audio_to_text: %s heard: %s', service, phrase)
